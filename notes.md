@@ -15,7 +15,21 @@
     * add isLoading data prop and toggle it accordingly in the GET request method
     * use v-if else statements to show either loading message or the expected markdown
         
-   
+8.  No-data state
+    * create a "no results" message, with guard conditions against checking properties on an undefined object, using v-else-if below the "loading" markup
+    
+9. Handling technical and browser-side errors
+    * declare an error data prop, set by the catch block of the api call
+    * use conditional logic to show the error in place of the previous messages (loading, no data, data)  
+    
+10.  Handling Error Responses
+    * in the Learning Survey component (the post engine of our app interface) change the POST request to send bad data -- this will result in a 400
+    * will the catch block detect an Error Response?
+      YES - AXIOS DOES THIS FINE
+      
+    * if not, check response status within the try block and throw an error if status not OK
+    * Display an error message to the user within the LearningSurvey component space
+    
     axios
         .post('/surveys.json', {
           name: this.enteredName,
