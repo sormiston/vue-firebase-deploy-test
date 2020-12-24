@@ -45,23 +45,30 @@
           <base-button>Submit</base-button>
         </div>
       </form>
+      <p v-if="errorMessage">{{ errorMessage }}</p>
+      <img v-if="errorCat" :src="errorCat" width="300" height="200" />
     </base-card>
   </section>
 </template>
 
 <script>
-import axios from '../../axios.js'
+import axios from '../../axios.js';
 export default {
   data() {
     return {
       enteredName: '',
       chosenRating: null,
       invalidInput: false,
+      errorMessage: null,
+      errorCat: null,
     };
   },
 
   methods: {
     submitSurvey() {
+      // reset errors
+      this.errorMessage = null;
+      this.errorCat = null;
       // validation
       if (this.enteredName === '' || !this.chosenRating) {
         this.invalidInput = true;
@@ -76,16 +83,17 @@ export default {
     },
     async postExperience() {
       try {
-        await axios.post(
-          '/surveys.json',
-          {
-            name: this.enteredName,
-            rating: this.chosenRating,
-          },
-          { timeout: 6000 }
-        );
+        await axios.post('/surveys.json', {
+          name: this.enteredName,
+          rating: this.chosenRating,
+        });
       } catch (err) {
-        console.error(err);
+        this.errorMessage = err.message;
+        if (err.response.status) {
+          this.errorMessage =
+            'Your data could not be stored.  Please try again later.';
+          this.errorCat = `https://http.cat/${err.response.status}`;
+        }
       }
     },
   },

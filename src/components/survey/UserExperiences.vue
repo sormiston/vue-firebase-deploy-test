@@ -7,7 +7,10 @@
           >Load Submitted Experiences</base-button
         >
       </div>
-      <ul>
+      <p v-if="isLoading">Loading...</p>
+      <p v-else-if="!isLoading && errorMessage"> {{ errorMessage }}</p>
+      <p v-else-if="!isLoading && results.length === 0">No surveys have been submitted yet.  Write a survey review above to be the first!</p>
+      <ul v-else>
         <survey-result
           v-for="result in results"
           :key="result.id"
@@ -30,24 +33,31 @@ export default {
   data() {
     return {
       results: [],
+      isLoading: false,
+      errorMessage: null
     };
   },
   methods: {
     async getExperiences() {
+      this.isLoading = true;
       try {
         const response = await axios('/surveys.json');
-        console.log(response.data);
+        const items = [];
         for (let key in response.data) {
-          this.results.push(response.data[key]);
+          items.push(response.data[key]);
         }
+        this.results = items;
       } catch (err) {
-        console.error(err);
+        console.error(err)
+        this.errorMessage = "Network Error, please try again later."
+      } finally {
+        this.isLoading = false;
       }
     },
   },
   mounted() {
-    this.getExperiences()
-  }
+    this.getExperiences();
+  },
 };
 </script>
 
