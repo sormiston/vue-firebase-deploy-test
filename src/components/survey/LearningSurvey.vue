@@ -50,10 +50,7 @@
 </template>
 
 <script>
-const axios = require('axios').default;
-axios.defaults.baseURL =
-  'https://http-vue-demo-a3588-default-rtdb.firebaseio.com/';
-
+import axios from '../../axios.js'
 export default {
   data() {
     return {
@@ -65,36 +62,31 @@ export default {
 
   methods: {
     submitSurvey() {
+      // validation
       if (this.enteredName === '' || !this.chosenRating) {
         this.invalidInput = true;
         return;
       }
       this.invalidInput = false;
-
-      axios
-        .post('/surveys.json', {
-          name: this.enteredName,
-          rating: this.chosenRating,
-        })
-        .then((response) => console.log(response))
-        .catch((error) => {
-          if (error.response) {
-            // The request was made and the server responded with a status code
-            // that falls out of the range of 2xx
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers);
-          } else if (error.request) {
-            // The request was made but no response was received
-            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-            // http.ClientRequest in node.js
-            console.log(error.request);
-            console.log('request error, above!');
-          }
-        });
-
+      // axios
+      this.postExperience();
+      // local state clean-up
       this.enteredName = '';
       this.chosenRating = null;
+    },
+    async postExperience() {
+      try {
+        await axios.post(
+          '/surveys.json',
+          {
+            name: this.enteredName,
+            rating: this.chosenRating,
+          },
+          { timeout: 6000 }
+        );
+      } catch (err) {
+        console.error(err);
+      }
     },
   },
 };
