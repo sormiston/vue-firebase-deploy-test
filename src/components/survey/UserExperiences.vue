@@ -10,7 +10,7 @@
       <p v-if="isLoading">Loading...</p>
       <p v-else-if="!isLoading && errorMessage"> {{ errorMessage }}</p>
       <p v-else-if="!isLoading && results.length === 0">No surveys have been submitted yet.  Write a survey review above to be the first!</p>
-      <ul v-else>
+      <ul v-else-if="!isLoading">
         <survey-result
           v-for="result in results"
           :key="result.id"
@@ -48,7 +48,6 @@ export default {
         }
         this.results = items;
       } catch (err) {
-        console.error(err)
         this.errorMessage = "Network Error, please try again later."
       } finally {
         this.isLoading = false;
